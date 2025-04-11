@@ -1,7 +1,7 @@
 'use client';
 import Quiz from './Quiz';
 import React, { useState } from 'react';
-import { parseFilename, ParsedSongInfo } from '@/app/utils/parseFilename';
+import { parseFilename, } from '@/app/utils/parseFilename';
 
 interface Song {
   file: File;
