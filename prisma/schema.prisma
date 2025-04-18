@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String?
+  name          String    @unique
+  image          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  emailVerified DateTime? // <- потрібно NextAuth
+  sessions      Session[]
+  accounts      Account[]
+  results       Result[]  @relation("UserResults")
+  songs         Song[]    @relation("UserSongs")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  expires      DateTime
+}
+
+model Account {
+  id                 Int     @id @default(autoincrement())
+  userId             Int
+  user               User    @relation(fields: [userId], references: [id])
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  @@unique([provider, providerAccountId])
+}
+
+model Song {
+  id                Int      @id @default(autoincrement())
+  filename          String
+  composer          String
+  collection        String
+  compositionNumber String
+  filePath          String
+  userId            Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation("UserSongs", fields: [userId], references: [id])
+  results           Result[] @relation("SongResults")
+}
+
+model Result {
+  id          Int      @id @default(autoincrement())
+  score       Int
+  userId      Int
+  songId      Int
+  completedAt DateTime @default(now())
+  user        User     @relation("UserResults", fields: [userId], references: [id])
+  song        Song     @relation("SongResults", fields: [songId], references: [id])
+}
