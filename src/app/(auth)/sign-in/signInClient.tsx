@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { loginSchema } from "@/lib/loginSchema";
+import { z } from "zod";
 
 export default function SignInClient() {
   const [email, setEmail] = useState("");
@@ -12,16 +15,33 @@ export default function SignInClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+    setError("");
+    
+    try {
+      loginSchema.parse({ email, password });
 
-    if (res?.error) {
-      setError("Невірні дані");
-    } else {
-      router.push("/");
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (res?.error) {
+        console.log(res.error)
+          if (res.error.includes("Email not verified")) {
+            setError("Підтвердіть email перед входом.");
+          } else {
+            setError("Невірні дані");
+          }        
+      } else {
+        router.push("/");
+      }
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setError(err.errors[0].message);
+      } else {
+        setError("Сталася невідома помилка");
+      }
     }
   };
 
@@ -30,8 +50,8 @@ export default function SignInClient() {
       <h1 className="text-2xl font-bold mb-4">Вхід</h1>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <input
-          type="email"
-          placeholder="Email"
+          type="text"
+          placeholder="Email або Логін"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full border px-4 py-2 rounded"
@@ -58,6 +78,11 @@ export default function SignInClient() {
           Google
         </button>
       </form>
+      <div className="text-center">
+        <button className="w-full bg-blue-600 text-white py-2 rounded">
+          <Link href="/sign-up">Dont have an account? Sign un</Link>
+        </button>
+      </div>
     </div>
   );
 }

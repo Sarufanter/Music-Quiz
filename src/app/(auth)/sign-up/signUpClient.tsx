@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
-export default function SignUpPage() {
+export default function SignUpClient() {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -57,6 +58,11 @@ export default function SignUpPage() {
           Зареєструватися
         </button>
       </form>
+      <div className="text-center">
+        <button className="w-full bg-blue-600 text-white py-2 rounded">
+          <Link href="/sign-in">Already have an account? Sign in</Link>
+        </button>
+      </div>
     </div>
   )
 }

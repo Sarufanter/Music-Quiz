@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
-  password      String?
-  name          String    @unique
-  image          String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  emailVerified DateTime? // <- потрібно NextAuth
-  sessions      Session[]
-  accounts      Account[]
-  results       Result[]  @relation("UserResults")
-  songs         Song[]    @relation("UserSongs")
+  id                Int                 @id @default(autoincrement())
+  name              String?
+  username          String?             @unique
+  password          String?
+  email             String              @unique
+  emailVerified     DateTime?
+  image             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  results           Result[]            @relation("UserResults")
+  songs             Song[]              @relation("UserSongs")
 }
 
 model Session {
@@ -72,4 +73,14 @@ model Result {
   completedAt DateTime @default(now())
   user        User     @relation("UserResults", fields: [userId], references: [id])
   song        Song     @relation("SongResults", fields: [songId], references: [id])
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
 }

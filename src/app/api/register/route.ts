@@ -1,40 +1,63 @@
-// app/api/register/route.ts
-import { z } from "zod"
-import { NextResponse } from "next/server"
-import bcrypt from "bcrypt"
-import db from "@/lib/prisma"
-
-const RegisterSchema = z.object({
-  email: z.string().email({ message: "Невірний email" }),
-  name: z.string().min(2, { message: "Ім'я закоротке" }),
-  password: z.string().min(6, { message: "Пароль має бути не менше 6 символів" }),
-})
+import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import db from "@/lib/prisma";
+import { registerShema } from "@/lib/registerSchema";
+import {
+  generateEmailVerificationToken,
+  sendEmailVerificationToken,
+} from "@/lib/emailVerification";
 
 export async function POST(req: Request) {
-  const body = await req.json()
+  const body = await req.json();
 
-  const parsed = RegisterSchema.safeParse(body)
+  const parsed = registerShema.safeParse(body);
   if (!parsed.success) {
-    const error = parsed.error.format()
-    return NextResponse.json({ message: "Помилка валідації", error }, { status: 400 })
+    const error = parsed.error.format();
+    return NextResponse.json(
+      { message: "Помилка валідації", error },
+      { status: 400 }
+    );
   }
 
-  const { email, name, password } = parsed.data
+  const { email, username, password } = parsed.data;
 
-  const userExists = await db.user.findUnique({ where: { email } })
+  const userExists = await db.user.findUnique({ where: { email } });
   if (userExists) {
-    return NextResponse.json({ message: "Користувач з таким email вже існує" }, { status: 400 })
+    return NextResponse.json(
+      { message: "Користувач з таким email вже існує" },
+      { status: 400 }
+    );
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10)
+  const usernameExists = await db.user.findUnique({ where: { username } });
+  if (usernameExists) {
+    return NextResponse.json(
+      { message: "Користувач з таким username вже існує" },
+      { status: 400 }
+    );
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   await db.user.create({
     data: {
       email,
-      name,
+      username,
       password: hashedPassword,
     },
-  })
+  });
 
-  return NextResponse.json({ message: "Користувача створено" }, { status: 201 })
+  const emailVerificationToken = await generateEmailVerificationToken(email);
+  const { error } = await sendEmailVerificationToken(
+    emailVerificationToken.email,
+    emailVerificationToken.token
+  );
+
+  if(error){
+    return {
+      error: 'Щось пішло не так. Спробуйте увійти ще раз!'
+    }
+  }
+  return NextResponse.json(
+    { message: "Користувача створено. Перевірте email для підтвердження." },
+    { status: 201 }
+  );
 }
