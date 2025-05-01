@@ -15,4 +15,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       });
     },
   },
+  pages: {
+    signIn: '/sign-in'
+  }
 });

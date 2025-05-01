@@ -1,6 +1,8 @@
 "use client";
 
-import { verifyEmail } from "@/app/api/verify-email/route";
+import { verifyEmail } from "@/app/actions/auth/verify-email";
+import Alert from "@/app/components/Alert";
+import Button from "@/app/components/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useEffect, useState } from "react";
@@ -15,7 +17,7 @@ const EmailVerificationClient = () => {
 
   useEffect(() => {
     setPending(true);
-    if (!token) return;
+    if (!token) return setError("Missing verification token");
 
     verifyEmail(token).then(res => {
       setSuccess(res.success);
@@ -27,9 +29,9 @@ const EmailVerificationClient = () => {
   return (
     <>
       {pending && <div>Verifying Email...</div>}
-      {success && <div>Success to verify Email...</div>}
-      {error && <div>We get some error to verify Email...</div>}
-      {success && <button onClick={()=> router.push('/sign-in')}> Увійти</button>}
+      {success && <Alert message={success} success/>}
+      {error && <Alert message={error} error/>}
+      {success && <Button className='bg-amber-500'type="submit" label="Увійти" onClick={()=> router.push('/sign-in')}/> }
     </>
   );
 };

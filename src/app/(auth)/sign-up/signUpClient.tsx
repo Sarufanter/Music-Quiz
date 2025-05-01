@@ -1,8 +1,8 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { registerShemaType } from '@/lib/registerSchema'
 
 export default function SignUpClient() {
   const [email, setEmail] = useState('')
@@ -11,7 +11,7 @@ export default function SignUpClient() {
   const [error, setError] = useState('')
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit: SubmitHandler<registerShemaType> = (data) => {
     e.preventDefault()
 
     const res = await fetch('/api/register', {
