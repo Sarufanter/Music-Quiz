@@ -1,13 +1,17 @@
-'use client';
-import Quiz from './Quiz';
-import React, { useState } from 'react';
-import { parseFilename, } from '@/app/utils/parseFilename';
+"use client";
+import Quiz from "./Quiz";
+import React, { useState } from "react";
+import { parseFilename } from "@/app/utils/parseFilename";
 
-interface Song {
+export interface Song {
   file: File;
   url: string;
-  composerAndCollection: string;
-  compositionNumber: string;
+  author: string;
+  title: string;
+  number: string | null;
+  part: string | null;
+  theme: string | null;
+  name?: string | null;
 }
 
 const FileUploader: React.FC = () => {
@@ -23,8 +27,11 @@ const FileUploader: React.FC = () => {
         parsedSongs.push({
           file,
           url: URL.createObjectURL(file),
-          composerAndCollection: parsed.composerAndCollection,
-          compositionNumber: parsed.compositionNumber,
+          author: parsed.author,
+          title: parsed.title,
+          number: parsed.number,
+          part: parsed.part,
+          theme: parsed.theme,         
         });
       }
     });
@@ -45,8 +52,21 @@ const FileUploader: React.FC = () => {
       <ul className="space-y-2">
         {songs.map((song, index) => (
           <li key={index} className="p-4 border rounded shadow">
-            <p><strong>Автор і збірка:</strong> {song.composerAndCollection}</p>
-            <p><strong>Номер композиції:</strong> {song.compositionNumber}</p>
+            <p>
+              <strong>Автор :</strong> {song.author}
+            </p>
+            <p>
+              <strong>Збірка:</strong> {song.title}
+            </p>
+            <p>
+              <strong>Номер композиції:</strong> {song.number}
+            </p>
+            <p>
+              <strong>Частина композиції:</strong> {song.part}
+            </p>
+            <p>
+              <strong>Тема композиції:</strong> {song.theme}
+            </p>
             <audio controls src={song.url} className="mt-2" />
           </li>
         ))}

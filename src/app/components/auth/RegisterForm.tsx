@@ -6,8 +6,8 @@ import Link from "next/link";
 import { registerShema, registerShemaType } from "@/lib/registerSchema";
 import { signUp } from "@/app/actions/auth/register";
 import { useState, useTransition } from "react";
-import Button from "@/app/components/Button";
-import Alert from "@/app/components/Alert";
+import Button from "@/app/components/ui/Button";
+import Alert from "@/app/components/ui/Alert";
 
 const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");

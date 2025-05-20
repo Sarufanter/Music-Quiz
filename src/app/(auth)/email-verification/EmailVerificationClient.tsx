@@ -1,8 +1,8 @@
 "use client";
 
 import { verifyEmail } from "@/app/actions/auth/verify-email";
-import Alert from "@/app/components/Alert";
-import Button from "@/app/components/Button";
+import Alert from "@/app/components/ui/Alert";
+import Button from "@/app/components/ui/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useEffect, useState } from "react";

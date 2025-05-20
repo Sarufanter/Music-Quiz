@@ -7,10 +7,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import FormField from "./FormField";
-import Alert from "./Alert";
-import Button from "./Button";
-import { passwordEmail } from "../actions/auth/password-email";
+import FormField from "../FormField";
+import Alert from "../ui/Alert";
+import Button from "../ui/Button";
+import { passwordEmail } from "../../actions/auth/password-email";
 
 const PasswordEmailForm = () => {
   const [error, setError] = useState<string | undefined>("");

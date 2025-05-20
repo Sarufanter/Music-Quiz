@@ -1,23 +1,20 @@
 import { auth } from "@/lib/auth";
 import FileUploader from "./components/FileUploader";
 import { redirect } from "next/navigation";
-import SignOutButton from "./components/SignOutButton";
+import SignOutButton from "./components/ui/SignOutButton";
+import { MultiFileDropzoneUsage } from "./components/MultiFileDropzone";
+import Link from "next/link";
 
 export default async function Home() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/sign-in");
-  }
-
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Музична вікторина — завантаження файлів
-      </h1>
-      <p>Hello {session.user.name || session.user.username}</p>
-      <FileUploader />
-      <SignOutButton/>
+    <main className="p-6 flex min-h-screen flex-col">
+      <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 md:h-40">
+        <h1 className="text-2xl text-white font-bold mb-4">Музична вікторина</h1>
+      </div>
+      <div className="flex  gap-5">
+        <Link href="/sign-in">Увійти</Link>
+        <Link href="/sign-up">Реєстрація</Link>
+      </div>
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import PasswordResetFormClient from '@/app/components/PasswordResetForm'
+import PasswordResetFormClient from '@/app/components/auth/PasswordResetForm'
 import React from 'react'
 
 function PasswordResetForm() {

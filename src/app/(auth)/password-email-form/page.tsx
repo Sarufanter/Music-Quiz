@@ -1,4 +1,4 @@
-import PasswordEmailForm from "@/app/components/PasswordEmailForm"
+import PasswordEmailForm from "@/app/components/auth/PasswordEmailForm"
 
 const PasswordEmailPage = () => {
     return (<><PasswordEmailForm/></>)

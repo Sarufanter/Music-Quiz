@@ -3,12 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import FormField from "./FormField";
-import Alert from "./Alert";
-import Button from "./Button";
+import FormField from "../FormField";
+import Alert from "../ui/Alert";
+import Button from "../ui/Button";
 import { useSearchParams } from "next/navigation";
 import { PasswordResetSchema, PasswordResetSchemaType } from "@/lib/PasswordResetShema";
-import { passwordReset } from "../actions/auth/password-reset";
+import { passwordReset } from "../../actions/auth/password-reset";
 
 const PasswordResetFormClient = () => {
   const searchParams = useSearchParams();

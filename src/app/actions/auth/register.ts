@@ -8,9 +8,8 @@ import {
 } from "@/lib/emailVerification";
 
 export const signUp = async (values: registerShemaType) => {
-
   const validatedCredentials = registerShema.safeParse(values);
-  
+
   if (!validatedCredentials.success) {
     return { error: "Помилка валідації" };
   }
@@ -21,12 +20,12 @@ export const signUp = async (values: registerShemaType) => {
 
   const userExists = await db.user.findUnique({ where: { email } });
   if (userExists) {
-    return {error: "Користувач з таким email вже існує"}
+    return { error: "Користувач з таким email вже існує" };
   }
 
   const usernameExists = await db.user.findUnique({ where: { username } });
   if (usernameExists) {
-    return {error: "Користувач з таким username вже існує"}
+    return { error: "Користувач з таким username вже існує" };
   }
 
   await db.user.create({
@@ -44,9 +43,12 @@ export const signUp = async (values: registerShemaType) => {
   );
 
   if (error) {
+    console.log(error);
     return {
       error: "Щось пішло не так. Спробуйте увійти ще раз!",
     };
   }
-  return {success: "Користувача створено. Перевірте email для підтвердження."}
+  return {
+    success: "Користувача створено. Перевірте email для підтвердження.",
+  };
 };

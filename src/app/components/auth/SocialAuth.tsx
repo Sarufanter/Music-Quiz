@@ -1,6 +1,6 @@
 'use client'
 import { signIn } from "next-auth/react"
-import Button from "@/app/components/Button";
+import Button from "@/app/components/ui/Button";
 const SocialAuth = () => {
   const handleOnClick = (provider: "google") => {
     signIn(provider, { redirectTo: "/sign-in" });

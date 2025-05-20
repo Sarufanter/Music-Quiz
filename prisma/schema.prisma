@@ -53,7 +53,7 @@ model Account {
 
 model SongsPreset {
   id          Int      @id @default(autoincrement())
-  title       String   // Наприклад: "20 творів Шопена"
+  title       String   
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

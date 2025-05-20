@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { Song } from './FileUploader';
 
-interface Song {
-  file: File;
-  url: string;
-  composerAndCollection: string;
-  compositionNumber: string;
-}
+
 
 interface QuizProps {
   songs: Song[];
@@ -36,7 +32,7 @@ const Quiz: React.FC<QuizProps> = ({ songs }) => {
     const variants = [...shuffled, correct].sort(() => 0.5 - Math.random());
 
     setCurrentSong(correct);
-    setOptions(variants.map((s) => s.compositionNumber));
+    setOptions(variants.map((s) => s.author + " " +s.title));
     setSelected(null);
     setShowResult(false);
   };
@@ -56,7 +52,7 @@ const Quiz: React.FC<QuizProps> = ({ songs }) => {
 
       <div className="space-y-2">
         {options.map((option, idx) => {
-          const isCorrect = option === currentSong.compositionNumber;
+          const isCorrect = option ===  currentSong.author + currentSong.title;
           const isSelected = selected === option;
 
           let bg = "bg-white";
@@ -81,11 +77,11 @@ const Quiz: React.FC<QuizProps> = ({ songs }) => {
 
       {showResult && (
         <div className="mt-4">
-          {selected === currentSong.compositionNumber ? (
+          {selected === currentSong.author ? (
             <p className="text-green-700 font-semibold">✅ Правильно!</p>
           ) : (
             <p className="text-red-700 font-semibold">
-              ❌ Неправильно. Правильна відповідь: <strong>{currentSong.compositionNumber}</strong>
+              ❌ Неправильно. Правильна відповідь: <strong>{currentSong.author + " " + currentSong.title}</strong>
             </p>
           )}
           <button

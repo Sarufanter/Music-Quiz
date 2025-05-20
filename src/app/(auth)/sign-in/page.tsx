@@ -1,10 +1,10 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import SignInClient from "./signInClient";
-import LoginForm from "./loginForm";
+
+import LoginForm from "../../components/auth/loginForm";
 
 export default async function SignInPage() {
   const session = await auth();
-  if (session) redirect("/");
+  if (session) redirect("/home");
   return <LoginForm />;
 }

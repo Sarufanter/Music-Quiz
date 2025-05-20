@@ -4,10 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, loginSchemaType } from "@/lib/loginSchema";
 import FormField from "@/app/components/FormField";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useState, useTransition, } from "react";
 import { login } from "@/app/actions/auth/login";
-import Button from "@/app/components/Button";
-import Alert from "@/app/components/Alert";
+import Button from "@/app/components/ui/Button";
+import Alert from "@/app/components/ui/Alert";
 import { useRouter, useSearchParams } from "next/navigation";
 import SocialAuth from "./SocialAuth";
 
@@ -37,7 +37,7 @@ const LoginForm = () => {
           setError(res.error);
         }
         if (!res?.error) {
-          router.push("/");
+          router.push("/home");
         }
 
         // if (res?.success) {

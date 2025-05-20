@@ -5,10 +5,6 @@ import Google from "next-auth/providers/google";
 import { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { loginSchema } from "@/lib/loginSchema";
-import {
-  generateEmailVerificationToken,
-  sendEmailVerificationToken,
-} from "./lib/emailVerification";
 
 export const authConfig: NextAuthConfig = {
   providers: [
