@@ -1,10 +1,6 @@
 "use server";
 
 import db from "@/lib/prisma";
-import {
-  generateEmailVerificationToken,
-  sendEmailVerificationToken,
-} from "@/lib/emailVerification";
 import { loginSchema, loginSchemaType } from "@/lib/loginSchema";
 import { AuthError } from "next-auth";
 import { signIn } from "@/lib/auth";
@@ -51,7 +47,7 @@ export const login = async (values: loginSchemaType) => {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: "Invalid credentials" };
+          return { error: "Помилкові дані" };
         default:
           return { error: "Щось пішло не так. Спробуйте увійти ще раз!" };
       }

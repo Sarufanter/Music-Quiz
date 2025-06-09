@@ -58,33 +58,36 @@ model SongsPreset {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   songs       Song[]   @relation("PresetSongs")
+  results Result[]
 }
 
 model Song {
   id                Int      @id @default(autoincrement())
   filename          String
   composer          String
-  collection        String
-  compositionNumber String
+  collection        String?
+  compositionNumber String?
+  compositionPart   String?
+  compositionTheme  String?
   filePath          String
-  userId            Int
+  userId            Int?
   presetId          Int?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  user              User     @relation("UserSongs", fields: [userId], references: [id])
+  user              User?     @relation("UserSongs", fields: [userId], references: [id])
   preset            SongsPreset?  @relation("PresetSongs", fields: [presetId], references: [id])
-  results           Result[] @relation("SongResults")
 }
 
 model Result {
   id          Int      @id @default(autoincrement())
   score       Int
   userId      Int
-  songId      Int
+  presetId     Int
   completedAt DateTime @default(now())
+
   user        User     @relation("UserResults", fields: [userId], references: [id])
-  song        Song     @relation("SongResults", fields: [songId], references: [id])
+  preset       SongsPreset   @relation(fields: [presetId], references: [id])
 }
 
 model VerificationToken {

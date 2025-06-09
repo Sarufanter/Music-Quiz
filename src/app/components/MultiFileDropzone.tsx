@@ -27,13 +27,14 @@ export function MultiFileDropzoneUsage() {
   );
 
   return (
-    <UploaderProvider uploadFn={uploadFn} autoUpload>
+    <UploaderProvider uploadFn={uploadFn} autoUpload={false}>
       <FileUploader
-        maxFiles={5}
-        maxSize={1024 * 1024 * 10} // 1 MB
+        // maxFiles={5}
+        maxSize={1024 * 1024 * 10} // 10 MB
         accept={{
-          'application/pdf': [],
-          'text/plain': ['.txt'],
+          // accept: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
+          // 'application/pdf': [],
+          // 'text/plain': ['.txt'],
         }}
       />
     </UploaderProvider>

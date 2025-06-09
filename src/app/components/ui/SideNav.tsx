@@ -1,4 +1,4 @@
-import NavLinks from '@/app/components/ui/navLinks';
+import NavLinks from '@/app/components/ui/NavLinks';
 import SignOutButton from './SignOutButton';
 
 

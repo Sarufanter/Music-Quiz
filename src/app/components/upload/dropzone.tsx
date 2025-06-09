@@ -64,8 +64,8 @@ const Dropzone = React.forwardRef<HTMLInputElement, DropzoneProps>(
       dropzoneOptions,
       className,
       disabled,
-      dropMessageActive = 'Drop files here...',
-      dropMessageDefault = 'drag & drop files here, or click to select',
+      dropMessageActive = 'Перетягни сюди...',
+      dropMessageDefault = 'Перетягни сюди або натисни й обери потрібні файли',
       ...props
     },
     ref,

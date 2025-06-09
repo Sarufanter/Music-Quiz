@@ -1,16 +1,20 @@
 "use client";
-import { FaSearch, FaHome } from "react-icons/fa";
+import { FaSearch, FaHome,FaHeadphonesAlt  } from "react-icons/fa";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
+
 const links = [
   { name: "Home", href: "/home", icon: FaHome },
   {
     name: "Quiz",
     href: "/home/quiz",
     icon: FaSearch,
+  },
+  {
+    name: "Presets",
+    href: "/home/presets",
+    icon: FaHeadphonesAlt,
   },
   //{ name: "Customers", href: "/dashboard/customers", icon: UserGroupIcon },
 ];

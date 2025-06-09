@@ -1,4 +1,4 @@
-import EmailVerificationClient from "./EmailVerificationClient"
+import EmailVerificationClient from "../../components/auth/EmailVerificationClient"
 
 const EmailVerificationPage = () => {
     return ( <EmailVerificationClient/>)
