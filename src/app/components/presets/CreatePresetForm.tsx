@@ -2,46 +2,49 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "@/app/components/FormField";
-import Link from "next/link";
 import { useState, useTransition } from "react";
 import Button from "@/app/components/ui/Button";
 import Alert from "@/app/components/ui/Alert";
 import { presetShcema, presetShcemaType } from "@/lib/createPresetSchema";
-import { MultiFileDropzoneUsage } from "../MultiFileDropzone";
-import { useEdgeStore } from "@/lib/edgestore";
-import { UploadFn } from "../upload/uploader-provider";
-import React from "react";
+import { FileUploader } from "../upload/multi-file";
+import { useUploader } from "../upload/uploader-provider";
+import * as React from "react";
 function CreatePresetForm() {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const { addFiles, uploadFiles, fileStates, isUploading } = useUploader();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<presetShcemaType>({ resolver: zodResolver(presetShcema) });
 
-  const onSubmit: SubmitHandler<presetShcemaType> = () => {
+  const onSubmit: SubmitHandler<presetShcemaType> = async (data) => {
+    console.log("Form data:", data);
     setSuccess("");
     setError("");
-     const { edgestore } = useEdgeStore();
-    
-      const uploadFn: UploadFn = React.useCallback(
-        async ({ file, onProgressChange, signal }) => {
-          const res = await edgestore.publicFiles.upload({
-            file,
-            signal,
-            onProgressChange,
-          });
-          // you can run some server action or api here
-          // to add the necessary data to your database
-          console.log(res);
-          return res;
-        },
-        [edgestore],
-      );
+    reset();
+
+    try {
+  const uploaded = await uploadFiles();
+  // If uploadFiles returns void, skip array checks
+  // If you expect uploaded files, handle them via fileStates or other state
+  // Example: log completed files from fileStates
+  const completed = fileStates.filter((f) => f.status === "COMPLETE" && f.url);
+
+  console.log("Готові URL:", completed.map((f) => f.url));
+
+    setSuccess("Форма успішно відправлена!");
+    reset();
+  } catch (err) {
+    console.error(err);
+    setError("Помилка при завантаженні файлів або відправці форми.");
+  }
   };
 
+  
   return (
     <div className="max-w-md mx-auto mt-20">
       <h1 className="text-2xl font-bold mb-4">Створити вікторину</h1>
@@ -62,7 +65,19 @@ function CreatePresetForm() {
           placeholder="Опис вікторини"
           disabled={isPending}
         />
-        <MultiFileDropzoneUsage/>
+        
+          <FileUploader
+            // maxFiles={5}
+            maxSize={1024 * 1024 * 10} // 10 MB
+            accept={
+              {
+                // accept: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
+                // 'application/pdf': [],
+                // 'text/plain': ['.txt'],
+              }
+            }
+          />
+        
         <div>{error && <Alert message={error} error />}</div>
         <div>{success && <Alert message={success} success />}</div>
         <Button

@@ -9,9 +9,9 @@ export const presetShcema = z.object({
     .string()
     .min(20, { message: "Дайте довший опис" })
     .max(100, { message: "Занадто довгий опис" }),
-  songs: z
-    .array(z.string().url(), { required_error: "Завантажте пісні" })
-    .min(1, { message: "Мінімум одна пісня" }),
+  // songs: z
+  //   .array(z.string().url(), { required_error: "Завантажте пісні" })
+  //   .min(1, { message: "Мінімум одна пісня" }),
 });
 
 export type presetShcemaType = z.infer<typeof presetShcema>;

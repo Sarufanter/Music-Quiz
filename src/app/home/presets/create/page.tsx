@@ -1,4 +1,5 @@
 import CreatePresetForm from "@/app/components/presets/CreatePresetForm";
+import CreatePresetWrapper from "@/app/components/presets/CreatePresetWrapper";
 import Breadcrumbs from "@/app/components/ui/Breadcrumbs";
 import React from "react";
 
@@ -16,7 +17,7 @@ function CreatePreset() {
         ]}
       />
       
-      <CreatePresetForm/>
+      <CreatePresetWrapper/>
     </>
   );
 }

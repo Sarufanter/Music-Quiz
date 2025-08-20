@@ -10,7 +10,6 @@ import * as React from 'react';
 
 export function MultiFileDropzoneUsage() {
   const { edgestore } = useEdgeStore();
-
   const uploadFn: UploadFn = React.useCallback(
     async ({ file, onProgressChange, signal }) => {
       const res = await edgestore.publicFiles.upload({
@@ -25,16 +24,14 @@ export function MultiFileDropzoneUsage() {
     },
     [edgestore],
   );
-
   return (
-    <UploaderProvider uploadFn={uploadFn} autoUpload={false}>
+    <UploaderProvider uploadFn={uploadFn} autoUpload>
       <FileUploader
-        // maxFiles={5}
-        maxSize={1024 * 1024 * 10} // 10 MB
+        maxFiles={5}
+        maxSize={1024 * 1024 * 1} // 1 MB
         accept={{
-          // accept: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
-          // 'application/pdf': [],
-          // 'text/plain': ['.txt'],
+          'application/pdf': [],
+          'text/plain': ['.txt'],
         }}
       />
     </UploaderProvider>
