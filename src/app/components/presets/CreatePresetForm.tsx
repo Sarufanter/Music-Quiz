@@ -9,11 +9,14 @@ import { presetShcema, presetShcemaType } from "@/lib/createPresetSchema";
 import { FileUploader } from "../upload/multi-file";
 import { useUploader } from "../upload/uploader-provider";
 import * as React from "react";
+
 function CreatePresetForm() {
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
-  const { addFiles, uploadFiles, fileStates, isUploading } = useUploader();
+
+  const { uploadFiles, fileStates, isUploading } = useUploader();
+
   const {
     register,
     handleSubmit,
@@ -22,29 +25,55 @@ function CreatePresetForm() {
   } = useForm<presetShcemaType>({ resolver: zodResolver(presetShcema) });
 
   const onSubmit: SubmitHandler<presetShcemaType> = async (data) => {
-    console.log("Form data:", data);
-    setSuccess("");
-    setError("");
-    reset();
+    setSuccess(undefined);
+    setError(undefined);
 
     try {
-  const uploaded = await uploadFiles();
-  // If uploadFiles returns void, skip array checks
-  // If you expect uploaded files, handle them via fileStates or other state
-  // Example: log completed files from fileStates
-  const completed = fileStates.filter((f) => f.status === "COMPLETE" && f.url);
+      // 1. Завантажуємо всі файли
+      await uploadFiles();
 
-  console.log("Готові URL:", completed.map((f) => f.url));
+      // 2. Фільтруємо тільки завершені
+      const completed = fileStates.filter(
+        (f) => f.status === "COMPLETE" && f.url
+      );
 
-    setSuccess("Форма успішно відправлена!");
-    reset();
-  } catch (err) {
-    console.error(err);
-    setError("Помилка при завантаженні файлів або відправці форми.");
-  }
+      if (completed.length === 0) {
+        setError("Не завантажено жодного файлу");
+        return;
+      }
+
+      // 3. Формуємо масив songs
+      const songs = completed.map((f) => ({
+        filename: f.file.name,
+        composer: "Unknown", // можеш зробити парсінг з назви
+        collection: null,
+        compositionNumber: null,
+        compositionPart: null,
+        compositionTheme: null,
+        filePath: f.url!, // url з EdgeStore
+      }));
+
+      // 4. Відправляємо у бекенд (Prisma)
+      const res = await fetch("/api/presets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          songs,
+        }),
+      });
+      console.log(res);
+      if (!res.ok) throw new Error("Не вдалось створити вікторину");
+
+      setSuccess("Вікторина успішно створена!");
+      reset();
+    } catch (err) {
+      console.error(err);
+      setError("Помилка при завантаженні файлів або збереженні.");
+    }
   };
 
-  
   return (
     <div className="max-w-md mx-auto mt-20">
       <h1 className="text-2xl font-bold mb-4">Створити вікторину</h1>
@@ -65,26 +94,24 @@ function CreatePresetForm() {
           placeholder="Опис вікторини"
           disabled={isPending}
         />
-        
-          <FileUploader
-            // maxFiles={5}
-            maxSize={1024 * 1024 * 10} // 10 MB
-            accept={
-              {
-                // accept: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
-                // 'application/pdf': [],
-                // 'text/plain': ['.txt'],
-              }
-            }
-          />
-        
-        <div>{error && <Alert message={error} error />}</div>
-        <div>{success && <Alert message={success} success />}</div>
+
+        <FileUploader
+          maxSize={1024 * 1024 * 10} // 10 MB
+          accept={{
+            "audio/mpeg": [".mp3"],
+            "audio/wav": [".wav"],
+            "audio/ogg": [".ogg"],
+          }}
+        />
+
+        {error && <Alert message={error} error />}
+        {success && <Alert message={success} success />}
+
         <Button
-          className="bg-green-600 "
+          className="bg-green-600"
           type="submit"
-          label={isPending ? "Відправляємо дані..." : "Створити вікторину"}
-          disabled={isPending}
+          label={isUploading ? "Завантаження..." : "Створити вікторину"}
+          disabled={isUploading || isPending}
         />
       </form>
     </div>

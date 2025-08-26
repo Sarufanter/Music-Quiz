@@ -22,7 +22,7 @@ export default function CreatePresetWrapper() {
   );
   
   return (
-    <UploaderProvider uploadFn={uploadFn} autoUpload={false}>
+    <UploaderProvider uploadFn={uploadFn} autoUpload={true}>
       <CreatePresetForm />
     </UploaderProvider>
   );
