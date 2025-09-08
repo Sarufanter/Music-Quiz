@@ -9,6 +9,7 @@ import { presetShcema, presetShcemaType } from "@/lib/createPresetSchema";
 import { FileUploader } from "../upload/multi-file";
 import { useUploader } from "../upload/uploader-provider";
 import * as React from "react";
+import { fileparseName } from "@/app/utils/parseFilename";
 
 function CreatePresetForm() {
   const [error, setError] = useState<string | undefined>();
@@ -43,16 +44,19 @@ function CreatePresetForm() {
       }
 
       // 3. Формуємо масив songs
-      const songs = completed.map((f) => ({
-        filename: f.file.name,
-        composer: "Unknown", // можеш зробити парсінг з назви
-        collection: null,
-        compositionNumber: null,
-        compositionPart: null,
-        compositionTheme: null,
-        filePath: f.url!, // url з EdgeStore
-      }));
+      const songs = completed.map((f) => {
+        const parsed = fileparseName(f.file.name);
 
+        return {
+          filename: f.file.name,
+          composer: parsed?.composer ?? "Unknown",
+          collection: parsed?.collection ?? null,
+          compositionNumber: parsed?.compositionNumber ?? null,
+          compositionPart: parsed?.compositionPart ?? null,
+          compositionTheme: parsed?.compositionTheme ?? null,
+          filePath: f.url!, // url з EdgeStore
+        };
+      });
       // 4. Відправляємо у бекенд (Prisma)
       const res = await fetch("/api/presets", {
         method: "POST",

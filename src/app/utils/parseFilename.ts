@@ -1,62 +1,62 @@
 export interface ParsedSongInfo {
-  author: string;
-  title: string;
-  number: string | null;
-  part: string | null;
-  theme: string | null;
-  name: string | null;
+  composer: string;
+  collection: string;
+  compositionNumber: string | null;
+  compositionPart: string | null;
+  compositionTheme: string | null;
+  filename: string | null;
 }
 
-export function parseFilename(filename: string): ParsedSongInfo | null {
+export function fileparseName(filefilename: string): ParsedSongInfo | null {
   // 1. Видалити розширення
-  let name = filename.replace(/\.[^/.]+$/, "");
+  let filename = filefilename.replace(/\.[^/.]+$/, "");
 
   // 2. Видалити початкову нумерацію
-  name = name.replace(/^\d+[-_\s]+/, "");
+  filename = filename.replace(/^\d+[-_\s]+/, "");
 
   // 3. Заміна всіх роздільників на пробіли
-  name = name.replace(/[-_\s]+/g, " ").trim();
+  filename = filename.replace(/[-_\s]+/g, " ").trim();
 
   // 4. Розбити по словах
-  const parts = name.split(" ");
-  if (parts.length < 2) return null;
+  const compositionParts = filename.split(" ");
+  if (compositionParts.length < 2) return null;
 
   // 5. Визначити автора: якщо друге слово — одна літера або ініціал, то це прізвище + ініціал
-  let author = parts[0];
+  let composer = compositionParts[0];
   let restStartIndex = 1;
 
-  if (/^[А-ЯҐЇЄІA-Z]\.?$/.test(parts[1])) {
-    author += ` ${parts[1]}`;
+  if (/^[А-ЯҐЇЄІA-Z]\.?$/.test(compositionParts[1])) {
+    composer += ` ${compositionParts[1]}`;
     restStartIndex = 2;
   }
 
-  const rest = parts.slice(restStartIndex);
+  const rest = compositionParts.slice(restStartIndex);
 
   // 6. Регулярки
-  const numberRegex = /№?\d+[а-я]*/i;
-  const partRegex = /^\d+ч$/i;
-  const themeRegex = /^(гп|основна|тема|хор|вступ|фінал|інтродукція)$/i;
+  const compositionNumberRegex = /№?\d+[а-я]*/i;
+  const compositionPartRegex = /^\d+ч$/i;
+  const compositionThemeRegex = /^(гп|основна|тема|хор|вступ|фінал|інтродукція)$/i;
 
-  const numberIndex = rest.findIndex((p) => numberRegex.test(p));
-  const partIndex = rest.findIndex((p) => partRegex.test(p));
-  const themeIndex = rest.findIndex((p) => themeRegex.test(p));
+  const compositionNumberIndex = rest.findIndex((p) => compositionNumberRegex.test(p));
+  const compositionPartIndex = rest.findIndex((p) => compositionPartRegex.test(p));
+  const compositionThemeIndex = rest.findIndex((p) => compositionThemeRegex.test(p));
 
-  const number = numberIndex !== -1 ? rest[numberIndex] : null;
-  const part = partIndex !== -1 ? rest[partIndex] : null;
-  const theme = themeIndex !== -1 ? rest[themeIndex] : null;
+  const compositionNumber = compositionNumberIndex !== -1 ? rest[compositionNumberIndex] : null;
+  const compositionPart = compositionPartIndex !== -1 ? rest[compositionPartIndex] : null;
+  const compositionTheme = compositionThemeIndex !== -1 ? rest[compositionThemeIndex] : null;
 
-  const excludeIndices = [numberIndex, partIndex, themeIndex].filter(
+  const excludeIndices = [compositionNumberIndex, compositionPartIndex, compositionThemeIndex].filter(
     (i) => i !== -1
   );
-  const titleParts = rest.filter((_, i) => !excludeIndices.includes(i));
-  const title = titleParts.join(" ");
+  const collectioncompositionParts = rest.filter((_, i) => !excludeIndices.includes(i));
+  const collection = collectioncompositionParts.join(" ");
 
   return {
-    author,
-    title,
-    number,
-    part,
-    theme,
-    name,
+    composer,
+    collection,
+    compositionNumber,
+    compositionPart,
+    compositionTheme,
+    filename,
   };
 }

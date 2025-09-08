@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Song } from './FileUploader';
+import React, { useEffect, useState } from "react";
 
-
+interface Song {
+  id: number;
+  filename: string;
+  composer: string;
+  filePath: string; // URL збережений у БД
+}
 
 interface QuizProps {
   songs: Song[];
@@ -25,14 +29,14 @@ const Quiz: React.FC<QuizProps> = ({ songs }) => {
     const correct = songs[randomIndex];
 
     const shuffled = [...songs]
-      .filter((s) => s !== correct)
+      .filter((s) => s.id !== correct.id)
       .sort(() => 0.5 - Math.random())
       .slice(0, 3);
 
     const variants = [...shuffled, correct].sort(() => 0.5 - Math.random());
 
     setCurrentSong(correct);
-    setOptions(variants.map((s) => s.author + " " +s.title));
+    setOptions(variants.map((s) => `${s.composer} - ${s.filename}`));
     setSelected(null);
     setShowResult(false);
   };
@@ -44,15 +48,19 @@ const Quiz: React.FC<QuizProps> = ({ songs }) => {
 
   if (!currentSong) return <p>Недостатньо пісень для вікторини.</p>;
 
+  const correctAnswer = `${currentSong.composer} - ${currentSong.filename}`;
+
   return (
     <div className="p-4 mt-6 border rounded shadow max-w-xl">
-      <h2 className="text-xl font-semibold mb-4">Прослухай і вибери правильну композицію:</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        Прослухай і вибери правильну композицію:
+      </h2>
 
-      <audio controls src={currentSong.url} className="mb-4" />
+      <audio controls src={currentSong.filePath} className="mb-4" />
 
       <div className="space-y-2">
         {options.map((option, idx) => {
-          const isCorrect = option ===  currentSong.author + currentSong.title;
+          const isCorrect = option === correctAnswer;
           const isSelected = selected === option;
 
           let bg = "bg-white";
@@ -77,11 +85,12 @@ const Quiz: React.FC<QuizProps> = ({ songs }) => {
 
       {showResult && (
         <div className="mt-4">
-          {selected === currentSong.author ? (
+          {selected === correctAnswer ? (
             <p className="text-green-700 font-semibold">✅ Правильно!</p>
           ) : (
             <p className="text-red-700 font-semibold">
-              ❌ Неправильно. Правильна відповідь: <strong>{currentSong.author + " " + currentSong.title}</strong>
+              ❌ Неправильно. Правильна відповідь:{" "}
+              <strong>{correctAnswer}</strong>
             </p>
           )}
           <button
